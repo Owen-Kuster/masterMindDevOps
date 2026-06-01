@@ -10,7 +10,7 @@ print("MasterMind")
 import random
 import os
 
-# Wachtwoord laden uit tekstbestand
+# Wachtwoord test laden uit tekstbestand
 def load_Password(filename="password.txt"):
     with open(filename) as f:
         return f.read().strip()
