@@ -4,9 +4,18 @@
 # v1.01
 # 15-8-2024
 # Last mod by DevJan : added loop for replay
+
 print("MasterMind")
 
 import random
+import os
+
+# Wachtwoord laden uit tekstbestand
+def load_Password(filename="password.txt"):
+    with open(filename) as f:
+        return f.read().strip()
+
+ADMIN_PASSWORD = load_Password()
 
 def generate_Code(length=4, digits=6):
     return [str(random.randint(1, digits)) for _ in range(length)]
@@ -14,7 +23,6 @@ def generate_Code(length=4, digits=6):
 def get_Feedback(secret, guess):
     black_Pegs = sum(s == g for s, g in zip(secret, guess))
     
-    # Count whites by subtracting black and calculating min digit frequency match
     secret_Counts = {}
     guess_Counts = {}
 
@@ -27,10 +35,22 @@ def get_Feedback(secret, guess):
     
     return black_Pegs, white_Pegs
 
-def show_Secret(mystery):
-    print(mystery)
+def admin_Check():
+    password = input("Enter admin password: ").strip()
+    if password == ADMIN_PASSWORD:
+        print("Access granted.")
+        return True
+    else:
+        print("Wrong password. Access denied.")
+        return False
 
-def play_Mastermind():
+def show_Secret(mystery, is_Admin):
+    if is_Admin:
+        print(f"Secret code: {mystery}")
+    else:
+        print("Access denied. Admin only.")
+
+def play_Mastermind(is_Admin):
     print("Welcome to Mastermind!")
     print("Guess the 4-digit code. Each digit is from 1 to 6. You have 10 attempts.")
     secret_Code = generate_Code()
@@ -41,10 +61,14 @@ def play_Mastermind():
         valid_Guess = False
         while not valid_Guess:
             guess = input(f"Attempt {attempt}: ").strip()
+
+            if guess == "cheat":
+                show_Secret(secret_Code, is_Admin)
+                continue
+
             valid_Guess = len(guess) == 4 and all(c in "123456" for c in guess)
             if not valid_Guess:
                 print("Invalid input. Enter 4 digits, each from 1 to 6.")
-            show_Secret(secret_Code) if guess == "cheat" else False
 
         black, white = get_Feedback(secret_Code, guess)
         print(f"Black pegs (correct position): {black}, White pegs (wrong position): {white}")
@@ -56,8 +80,10 @@ def play_Mastermind():
     print(f"Sorry, you've used all attempts. The correct code was: {''.join(secret_Code)}")
 
 if __name__ == "__main__":
-    again = 'Y'
-    while again == 'Y' :
-        play_Mastermind()
-        again  = input (f"Play again (Y/N) ?").upper()
+    print("=== Admin check ===")
+    is_Admin = admin_Check()
 
+    again = 'Y'
+    while again == 'Y':
+        play_Mastermind(is_Admin)
+        again = input("Play again (Y/N) ?").upper()
