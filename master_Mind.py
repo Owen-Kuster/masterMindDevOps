@@ -1,24 +1,25 @@
 #!/bin/python3
 # MasterMind
 # by ICTROCN
-# v1.01
-# 15-8-2024
-# Last mod by DevJan : added loop for replay
 
 print("MasterMind")
 
 import random
 import os
 
-# Wachtwoord test laden uit tekstbestand
+# Een lijst met de 5 kleuren..
+COLORS = ["Red", "Blue", "Yellow", "Purple", "Green"]
+
 def load_Password(filename="password.txt"):
     with open(filename) as f:
         return f.read().strip()
 
 ADMIN_PASSWORD = load_Password()
 
-def generate_Code(length=4, digits=6):
-    return [str(random.randint(1, digits)) for _ in range(length)]
+# random.choice(COLORS) pakt een willekeurige kleur uit de lijst.
+# Dit gebeurt vier keer.
+def generate_Code(length=4):
+    return [random.choice(COLORS) for _ in range(length)]
 
 def get_Feedback(secret, guess):
     black_Pegs = sum(s == g for s, g in zip(secret, guess))
@@ -52,32 +53,43 @@ def show_Secret(mystery, is_Admin):
 
 def play_Mastermind(is_Admin):
     print("Welcome to Mastermind!")
-    print("Guess the 4-digit code. Each digit is from 1 to 6. You have 10 attempts.")
+
+    # ', '.join(COLORS) maakt van de lijst een zin: "Red, Blue, Yellow, Purple, Green"
+    print(f"Guess the 4 colors. Choose from: {', '.join(COLORS)}")
+    print("You have 10 attempts.")
+
     secret_Code = generate_Code()
     attempts = 10
 
     for attempt in range(1, attempts + 1):
-        guess = ""
+        guess = []
         valid_Guess = False
         while not valid_Guess:
-            guess = input(f"Attempt {attempt}: ").strip()
+            # De speler typt 4 kleuren, gescheiden door een spatie.
+            # .strip() verwijdert spaties aan het begin en einde.
+            raw_input = input(f"Attempt {attempt} (e.g. Red Blue Green Red): ").strip()
 
-            if guess == "cheat":
+            if raw_input.lower() == "cheat":
                 show_Secret(secret_Code, is_Admin)
                 continue
 
-            valid_Guess = len(guess) == 4 and all(c in "123456" for c in guess)
+            # .split() knipt op spaties ["red", "BLUE", "green", "red"]
+            # .capitalize() op elke kleur ["Red", "Blue", "Green", "Red"]
+            guess = [color.capitalize() for color in raw_input.split()]
+
+            # Checkt of er precies 4 kleuren zijn en of elke kleur in de COLORS staat
+            valid_Guess = len(guess) == 4 and all(c in COLORS for c in guess)
             if not valid_Guess:
-                print("Invalid input. Enter 4 digits, each from 1 to 6.")
+                print(f"Invalid input. Enter exactly 4 colors from: {', '.join(COLORS)}")
 
         black, white = get_Feedback(secret_Code, guess)
         print(f"Black pegs (correct position): {black}, White pegs (wrong position): {white}")
 
         if black == 4:
-            print(f"Congratulations! You guessed the code: {''.join(secret_Code)}")
+            print(f"Congratulations! You guessed the code: {' '.join(secret_Code)}")
             return
 
-    print(f"Sorry, you've used all attempts. The correct code was: {''.join(secret_Code)}")
+    print(f"Sorry, you've used all attempts. The correct code was: {' '.join(secret_Code)}")
 
 if __name__ == "__main__":
     print("=== Admin check ===")
