@@ -67,7 +67,7 @@ def play_Mastermind(is_Admin):
         while not valid_Guess:
             # De speler typt 4 kleuren, gescheiden door een spatie.
             # .strip() verwijdert spaties aan het begin en einde.
-            raw_input = input(f"Attempt {attempt} (e.g. Red Blue Green Red): ").strip()
+            raw_input = input(f"Attempt {attempt} (Red Blue Green Red): ").strip()
 
             if raw_input.lower() == "cheat":
                 show_Secret(secret_Code, is_Admin)
