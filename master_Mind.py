@@ -5,7 +5,6 @@
 print("MasterMind")
 
 import random
-import os
 
 # Een lijst met de 5 kleuren..
 COLORS = ["Red", "Blue", "Yellow", "Purple", "Green"]
