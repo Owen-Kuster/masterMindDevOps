@@ -71,7 +71,7 @@ def play_Mastermind(is_Admin):
         # Guess is lijst ipv string
         # Kan je kleuren mee splitsen en vergelijken
         guess = []
-        valid_Guess = False
+        valid_Guess = False;
         while not valid_Guess:
             # Kleuren toegevoegd aan de prompt
             # Laat attempt zien
